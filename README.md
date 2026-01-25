@@ -1,2 +1,2 @@
 automaty (Protokoły sieci Web)
-Piotr Burchardt
+Piotr Burchardt, 300841, gr. 1
