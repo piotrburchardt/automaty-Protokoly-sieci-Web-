@@ -1,1 +1,6 @@
 notatki/
+testy/
+__pycache__/
+*.pyc
+.venv/
+app.db
