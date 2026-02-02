@@ -18,7 +18,8 @@ def init_db():
               id INTEGER PRIMARY KEY,
               name TEXT NOT NULL,
               price INTEGER NOT NULL,
-              grams INTEGER NOT NULL
+              grams INTEGER NOT NULL,
+              is_archived INTEGER NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS machines (
@@ -26,6 +27,7 @@ def init_db():
               city TEXT NOT NULL,
               location TEXT NOT NULL,
               status TEXT NOT NULL,
+              is_archived INTEGER NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS machine_inventory (
@@ -41,7 +43,7 @@ def init_db():
               id INTEGER PRIMARY KEY,
               username TEXT NOT NULL UNIQUE,
               password_hash TEXT NOT NULL,
-              role TEXT NOT NULL,
+              role TEXT NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS orders (
@@ -52,8 +54,10 @@ def init_db():
               price INTEGER NOT NULL,
               created_at TEXT NOT NULL,
               payment_method TEXT NOT NULL,
+              user_id INTEGER,
               FOREIGN KEY (machine_id) REFERENCES machines (id),
-              FOREIGN KEY (product_id) REFERENCES products (id)
+              FOREIGN KEY (product_id) REFERENCES products (id),
+              FOREIGN KEY (user_id) REFERENCES users (id)
             );
 
             CREATE TABLE IF NOT EXISTS issues (
@@ -68,3 +72,8 @@ def init_db():
             );
             """
         )
+
+        try:
+            db.execute("ALTER TABLE orders ADD COLUMN user_id INTEGER;")
+        except Exception:
+            pass

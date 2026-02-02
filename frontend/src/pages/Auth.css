@@ -1,0 +1,23 @@
+.authPage {
+  width: min(420px, 92vw);
+  margin: 40px auto;
+  padding: 16px;
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.authForm input {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  font: inherit;
+}
+
+.authError {
+  margin-top: 10px;
+  color: #b91c1c;
+}
