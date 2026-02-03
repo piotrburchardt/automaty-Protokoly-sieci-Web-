@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, Response, Request
 from pydantic import BaseModel
 import jwt
@@ -15,9 +13,7 @@ class IssueCreate(BaseModel):
     machine_id: int
     title: str
     description: str
-    status: str
     created_at: str
-    closed_at: Optional[str] = None
 
 
 def is_admin(request: Request):
@@ -35,15 +31,13 @@ def is_admin(request: Request):
 def create_issue(data: IssueCreate):
     with connect() as db:
         db.execute(
-            "INSERT INTO issues (machine_id, title, description, status, created_at, closed_at) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO issues (machine_id, title, description, created_at) "
+            "VALUES (?, ?, ?, ?)",
             (
                 data.machine_id,
                 data.title,
                 data.description,
-                data.status,
                 data.created_at,
-                data.closed_at,
             ),
         )
     return Response(status_code=201)
@@ -74,15 +68,13 @@ def get_issue(issue_id: int):
 def update_issue(issue_id: int, data: IssueCreate):
     with connect() as db:
         cur = db.execute(
-            "UPDATE issues SET machine_id = ?, title = ?, description = ?, status = ?, created_at = ?, closed_at = ? "
+            "UPDATE issues SET machine_id = ?, title = ?, description = ?, created_at = ? "
             "WHERE id = ?",
             (
                 data.machine_id,
                 data.title,
                 data.description,
-                data.status,
                 data.created_at,
-                data.closed_at,
                 issue_id,
             ),
         )

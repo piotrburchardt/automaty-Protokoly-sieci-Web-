@@ -148,12 +148,21 @@
   font: inherit;
 }
 
+.userActionsLabel {
+  display: grid;
+  gap: 4px;
+}
+
+.userActionsLabelText {
+  margin-left: 2px;
+}
+
 .userActionsCard textarea {
   resize: vertical;
 }
 
 .userBtn {
-  padding: 9px 12px;
+  padding: 9px 10px;
   border-radius: 10px;
   border: 1px solid rgba(15, 23, 42, 0.14);
   background: rgba(59, 130, 246, 0.12);

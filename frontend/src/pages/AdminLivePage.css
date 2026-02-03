@@ -1,0 +1,33 @@
+.adminLive {
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.liveGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.liveGrid section {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+  display: grid;
+  gap: 6px;
+}
+
+.liveGrid h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.liveGrid ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}

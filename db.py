@@ -50,7 +50,6 @@ def init_db():
               id INTEGER PRIMARY KEY,
               machine_id INTEGER NOT NULL,
               product_id INTEGER NOT NULL,
-              status TEXT NOT NULL,
               price INTEGER NOT NULL,
               created_at TEXT NOT NULL,
               payment_method TEXT NOT NULL,
@@ -65,15 +64,9 @@ def init_db():
               machine_id INTEGER NOT NULL,
               title TEXT NOT NULL,
               description TEXT NOT NULL,
-              status TEXT NOT NULL,
               created_at TEXT NOT NULL,
-              closed_at TEXT,
               FOREIGN KEY (machine_id) REFERENCES machines (id)
             );
             """
         )
-
-        try:
-            db.execute("ALTER TABLE orders ADD COLUMN user_id INTEGER;")
-        except Exception:
-            pass
+        

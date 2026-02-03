@@ -7,9 +7,8 @@ def seed_db():
         # USERS
         users = [
             ("admin", "admin", "admin"),
-            ("piotr", "haslo", "user"),
-            ("paweł", "12345678", "user"),
-            ("kuba", "123123", "user"),
+            ("user1", "123", "user"),
+            ("user2", "123", "user")
         ]
         
         for username, password, role in users:
@@ -39,38 +38,35 @@ def seed_db():
         db.execute("INSERT OR IGNORE INTO machines (id, city, location, status) VALUES (6, 'Gdańsk', 'Park', 'aktywny');")
         db.execute("INSERT OR IGNORE INTO machines (id, city, location, status) VALUES (7, 'Malbork', 'Dworzec', 'aktywny');")
         db.execute("INSERT OR IGNORE INTO machines (id, city, location, status) VALUES (8, 'Malbrok', 'Zamek', 'aktywny');")
-
+        db.execute("INSERT OR IGNORE INTO machines (id, city, location, status) VALUES (9, 'Gdańsk', 'Rynek', 'aktywny');")
+        db.execute("INSERT OR IGNORE INTO machines (id, city, location, status) VALUES (10, 'Malbork', 'Rynek', 'aktywny');")
+        db.execute("INSERT OR IGNORE INTO machines (id, city, location, status) VALUES (11, 'Malbrok', 'Ratusz', 'aktywny');")
 
         # INVENTORY
         for machine_id in range(1, 9):
             for product_id in range(1, 11):
                 db.execute(
                     "INSERT OR REPLACE INTO machine_inventory (machine_id, product_id, qty) VALUES (?, ?, ?);",
-                    (machine_id, product_id, 5),
-                )
+                    (machine_id, product_id, 5),)
 
         # ORDERS 
         db.execute(
-            "INSERT INTO orders (machine_id, product_id, status, price, created_at, payment_method, user_id) "
-            "VALUES (1, 1, 'created', 450, '2026-01-30 12:00:00', 'blik', 2);"
+            "INSERT INTO orders (machine_id, product_id, price, created_at, payment_method, user_id) "
+            "VALUES (1, 1, 450, '2026-01-30 12:00:00', 'blik', 2);"
         )
         db.execute(
-            "INSERT INTO orders (machine_id, product_id, status, price, created_at, payment_method, user_id) "
-            "VALUES (2, 3, 'paid', 550, '2026-01-30 12:05:00', 'card', 3);"
-        )
-        db.execute(
-            "INSERT INTO orders (machine_id, product_id, status, price, created_at, payment_method, user_id) "
-            "VALUES (3, 5, 'paid', 699, '2026-01-30 12:10:00', 'cash', 4);"
+            "INSERT INTO orders (machine_id, product_id, price, created_at, payment_method, user_id) "
+            "VALUES (2, 3, 550, '2026-01-30 12:05:00', 'blik', 2);"
         )
 
         # ISSUES
         db.execute(
-            "INSERT OR IGNORE INTO issues (id, machine_id, title, description, status, created_at, closed_at) "
-            "VALUES (1, 1, 'Brak monet', 'Automat nie przyjmuje monet', 'open', '2026-01-28 09:00', NULL);"
+            "INSERT OR IGNORE INTO issues (id, machine_id, title, description, created_at) "
+            "VALUES (1, 1, 'Brak monet', 'Automat nie wydaje monet', '2026-01-28 09:00');"
         )
         db.execute(
-            "INSERT OR IGNORE INTO issues (id, machine_id, title, description, status, created_at, closed_at) "
-            "VALUES (2, 2, 'Zacięty produkt', 'Produkt utknął w podajniku', 'open', '2026-01-29 11:30', NULL);"
+            "INSERT OR IGNORE INTO issues (id, machine_id, title, description, created_at) "
+            "VALUES (2, 2, 'Zacięty produkt', 'Produkt utknął', '2026-01-29 11:30');"
         )
 
 seed_db()

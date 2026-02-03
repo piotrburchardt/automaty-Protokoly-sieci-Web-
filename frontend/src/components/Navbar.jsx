@@ -41,6 +41,10 @@ export default function Navbar({ search, onSearchChange }) {
               Lista usterek
             </button>
             <span className="divider">|</span>
+            <button type="button" className="homeButton" onClick={() => navigate('/admin-live')}>
+              Podgląd live
+            </button>
+            <span className="divider">|</span>
             <button type="button" className="homeButton" onClick={() => navigate('/historia-zakupow')}>
               Historia zakupów
             </button>

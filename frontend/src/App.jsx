@@ -8,6 +8,7 @@ import MachinePage from './pages/MachinePage.jsx'
 import ProductsPage from './pages/ProductsPage.jsx'
 import IssuesPage from './pages/IssuesPage.jsx'
 import PurchaseHistoryPage from './pages/PurchaseHistoryPage.jsx'
+import AdminLivePage from './pages/AdminLivePage.jsx'
 
 export default function App() {
   const [search, setSearch] = useState('')
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/produkty" element={<ProductsPage />} />
         <Route path="/usterki" element={<IssuesPage />} />
         <Route path="/historia-zakupow" element={<PurchaseHistoryPage />} />
+        <Route path="/admin-live" element={<AdminLivePage />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Routes>

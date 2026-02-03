@@ -27,23 +27,7 @@ export default function IssuesPage() {
     })
   }
 
-  if (!user) {
-    return (
-      <div className="issuesPage">
-        <h1>Lista usterek</h1>
-        <p>Zaloguj się jako admin.</p>
-      </div>
-    )
-  }
-
-  if (user.role !== 'admin') {
-    return (
-      <div className="issuesPage">
-        <h1>Lista usterek</h1>
-        <p>Usterki wysyłają użytkownicy, a tutaj podgląd i usuwanie ma tylko admin.</p>
-      </div>
-    )
-  }
+  if (!user || user.role !== 'admin') return null
 
   if (loading) {
     return (
@@ -67,11 +51,11 @@ export default function IssuesPage() {
                 #{i.id} - {i.title}
               </div>
               <div className="issueMeta">
-                Automat: {i.machine_id} | Status: {i.status}
+                Automat: {i.machine_id}
               </div>
               <div className="issueText">{i.description}</div>
               <div className="issueTime">
-                Utworzono: {i.created_at} {i.closed_at ? `| Zamknięto: ${i.closed_at}` : ''}
+                Zgłoszono: {i.created_at}
               </div>
               <button
                 type="button"

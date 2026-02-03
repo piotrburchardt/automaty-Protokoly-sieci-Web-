@@ -13,7 +13,6 @@ SECRET_KEY = os.getenv("JWT_SECRET")
 class OrderCreate(BaseModel):
     machine_id: int
     product_id: int
-    status: str
     price: int
     created_at: str
     payment_method: str
@@ -46,12 +45,11 @@ def create_order(data: OrderCreate, request: Request):
             (data.machine_id, data.product_id),
         )
         db.execute(
-            "INSERT INTO orders (machine_id, product_id, status, price, created_at, payment_method, user_id) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO orders (machine_id, product_id, price, created_at, payment_method, user_id) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
             (
                 data.machine_id,
                 data.product_id,
-                data.status,
                 data.price,
                 data.created_at,
                 data.payment_method,
@@ -104,12 +102,11 @@ def get_order(order_id: int):
 def update_order(order_id: int, data: OrderCreate):
     with connect() as db:
         db.execute(
-            "UPDATE orders SET machine_id = ?, product_id = ?, status = ?, price = ?, created_at = ?, payment_method = ? "
+            "UPDATE orders SET machine_id = ?, product_id = ?, price = ?, created_at = ?, payment_method = ? "
             "WHERE id = ?",
             (
                 data.machine_id,
                 data.product_id,
-                data.status,
                 data.price,
                 data.created_at,
                 data.payment_method,

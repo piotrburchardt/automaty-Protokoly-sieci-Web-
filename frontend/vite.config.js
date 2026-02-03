@@ -10,6 +10,7 @@ export default defineConfig({
       '/products': 'http://localhost:8000',
       '/orders': 'http://localhost:8000',
       '/issues': 'http://localhost:8000',
+      '/sse': 'http://localhost:8000',
     },
   },
 })

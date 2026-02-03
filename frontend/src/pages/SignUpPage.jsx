@@ -10,7 +10,7 @@ export default function SignUpPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
 
-  async function onSubmit(e) {
+  function onSubmit(e) {
     e.preventDefault()
     setError(null)
 
@@ -25,10 +25,10 @@ export default function SignUpPage() {
         if (res.status === 201) {
           return refresh().then(() => navigate('/signin'))
         }
-
         if (res.status === 409) {
           throw new Error('Nazwa juz zajęta')
         }
+        throw new Error('Rejestracja nieudana')
       })
       .catch((err) => setError(err.message))
   }

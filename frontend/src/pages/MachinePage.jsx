@@ -26,39 +26,44 @@ export default function MachinePage() {
   useEffect(() => {
     let ignore = false
 
-    const load = async () => {
+    const load = () => {
       setLoading(true)
       setError(null)
-      try {
-        const [machineRes, invRes, productsRes] = await Promise.all([
-          fetch(`/machines/${id}`),
-          fetch(`/machines/${id}/inventory`),
-          user?.role === 'admin' ? fetch('/products') : Promise.resolve(null),
-        ])
+      Promise.all([
+        fetch(`/machines/${id}`),
+        fetch(`/machines/${id}/inventory`),
+        user?.role === 'admin' ? fetch('/products') : Promise.resolve(null),
+      ])
+        .then(([machineRes, invRes, productsRes]) => {
+          if (!machineRes.ok) throw new Error('Nie znaleziono automatu')
+          if (!invRes.ok) throw new Error('Błąd wczytywania produktów')
+          if (productsRes && !productsRes.ok) throw new Error('Błąd wczytywania produktów')
 
-        if (!machineRes.ok) throw new Error('Nie znaleziono automatu')
-        if (!invRes.ok) throw new Error('Błąd wczytywania produktów')
-        if (productsRes && !productsRes.ok) throw new Error('Błąd wczytywania produktów')
-
-        const machineData = await machineRes.json()
-        const invData = await invRes.json()
-        const productsData = productsRes ? await productsRes.json() : []
-
-        if (ignore) return
-
-        setMachine(machineData)
-        setForm({
-          city: machineData.city || '',
-          location: machineData.location || '',
-          status: machineData.status || '',
+          return Promise.all([
+            machineRes.json(),
+            invRes.json(),
+            productsRes ? productsRes.json() : Promise.resolve([]),
+          ])
         })
-        setInventory(invData)
-        setProducts(productsData)
-      } catch (err) {
-        if (!ignore) setError(err.message || String(err))
-      } finally {
-        if (!ignore) setLoading(false)
-      }
+        .then(([machineData, invData, productsData]) => {
+
+          if (ignore) return
+
+          setMachine(machineData)
+          setForm({
+            city: machineData.city || '',
+            location: machineData.location || '',
+            status: machineData.status || '',
+          })
+          setInventory(invData)
+          setProducts(productsData)
+        })
+        .catch((err) => {
+          if (!ignore) setError(err.message || String(err))
+        })
+        .finally(() => {
+          if (!ignore) setLoading(false)
+        })
     }
 
     load()
@@ -82,35 +87,38 @@ export default function MachinePage() {
     ? newItem.product_id || String(availableProducts[0].id)
     : ''
 
-  const handleUpdateMachine = async (e) => {
+  const formatLocalDateTime = () => {
+    const now = new Date()
+    const pad = (n) => String(n).padStart(2, '0')
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+  }
+
+  const handleUpdateMachine = (e) => {
     e.preventDefault()
     setSaving(true)
     setError(null)
-    try {
-      const res = await fetch(`/machines/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+    fetch(`/machines/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Nie udało się zapisać')
+        setMachine((prev) => ({ ...prev, ...form }))
       })
-      if (!res.ok) throw new Error('Nie udało się zapisać')
-      setMachine((prev) => ({ ...prev, ...form }))
-    } catch (err) {
-      setError(err.message || String(err))
-    } finally {
-      setSaving(false)
-    }
+      .catch((err) => setError(err.message || String(err)))
+      .finally(() => setSaving(false))
   }
 
-  const handleDeleteMachine = async () => {
+  const handleDeleteMachine = () => {
     if (!window.confirm('Usunąć ten automat?')) return
     setError(null)
-    try {
-      const res = await fetch(`/machines/${id}`, { method: 'DELETE' })
-      if (res.status === 204) navigate('/HomePage')
-      else throw new Error('Nie udało się usunąć automatu')
-    } catch (err) {
-      setError(err.message || String(err))
-    }
+    fetch(`/machines/${id}`, { method: 'DELETE' })
+      .then((res) => {
+        if (res.status === 204) navigate('/HomePage')
+        else throw new Error('Nie udało się usunąć automatu')
+      })
+      .catch((err) => setError(err.message || String(err)))
   }
 
   const handleQtyChange = (productId, rawValue) => {
@@ -123,67 +131,60 @@ export default function MachinePage() {
     )
   }
 
-  const handleQtySave = async (productId, qty) => {
+  const handleQtySave = (productId, qty) => {
     setSaving(true)
     setError(null)
-    try {
-      const res = await fetch(`/machines/${id}/inventory/${productId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ qty }),
+    fetch(`/machines/${id}/inventory/${productId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ qty }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Nie udało się zapisać ilości')
+        return loadInventory()
       })
-      if (!res.ok) throw new Error('Nie udało się zapisać ilości')
-      await loadInventory()
-    } catch (err) {
-      setError(err.message || String(err))
-    } finally {
-      setSaving(false)
-    }
+      .catch((err) => setError(err.message || String(err)))
+      .finally(() => setSaving(false))
   }
 
-  const handleDeleteItem = async (productId) => {
+  const handleDeleteItem = (productId) => {
     setSaving(true)
     setError(null)
-    try {
-      const res = await fetch(`/machines/${id}/inventory/${productId}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Nie udało się usunąć produktu')
-      await loadInventory()
-    } catch (err) {
-      setError(err.message || String(err))
-    } finally {
-      setSaving(false)
-    }
+
+    fetch(`/machines/${id}/inventory/${productId}`, { method: 'DELETE' })
+      .then((res) => {
+        if (!res.ok) throw new Error('Nie udało się usunąć produktu')
+        return loadInventory()
+      })
+      .catch((err) => {
+        setError(err.message || String(err))
+      })
+      .finally(() => {
+        setSaving(false)
+      })
   }
 
-  const handleAddItem = async (e) => {
+  const handleAddItem = (e) => {
     e.preventDefault()
     if (!selectedProductId) return
     setSaving(true)
     setError(null)
-    try {
-      const res = await fetch(`/machines/${id}/inventory`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          product_id: Number(selectedProductId),
-          qty: Number(newItem.qty),
-        }),
+    fetch(`/machines/${id}/inventory`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        product_id: Number(selectedProductId),
+        qty: Number(newItem.qty),
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Nie udało się dodać produktu')
+        setNewItem({ product_id: '', qty: 1 })
+        return loadInventory()
       })
-      if (!res.ok) throw new Error('Nie udało się dodać produktu')
-      setNewItem({ product_id: '', qty: 1 })
-      await loadInventory()
-    } catch (err) {
-      setError(err.message || String(err))
-    } finally {
-      setSaving(false)
-    }
+      .catch((err) => setError(err.message || String(err)))
+      .finally(() => setSaving(false))
   }
-
-  useEffect(() => {
-    if (inventory.length > 0) {
-      setBuyProductId(String(inventory[0].product_id))
-    }
-  }, [inventory])
 
   const handleBuy = (e) => {
     e.preventDefault()
@@ -199,9 +200,8 @@ export default function MachinePage() {
       body: JSON.stringify({
         machine_id: Number(id),
         product_id: Number(buyProductId),
-        status: 'paid',
         price: item.price,
-        created_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        created_at: formatLocalDateTime(),
         payment_method: 'card',
       }),
     })
@@ -231,9 +231,7 @@ export default function MachinePage() {
         machine_id: Number(id),
         title: issueForm.title,
         description: issueForm.description,
-        status: 'open',
         created_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        closed_at: null,
       }),
     })
       .then((res) => {
@@ -261,7 +259,6 @@ export default function MachinePage() {
 
       <div className="machineHero">
         <div className="machineMeta">
-          <div className="eyebrow">Automat #{machine.id}</div>
           <h1>{machine.city} — {machine.location}</h1>
           <div className="statusRow">
             <span className={`statusDot ${machine.status === 'aktywny' ? 'isActive' : ''}`} />
@@ -274,11 +271,11 @@ export default function MachinePage() {
                 {inventory.length > 0 ? (
                   <>
                     <label className="userActionsLabel">
-                      <span>Wybierz</span>
+                      <span className="userActionsLabelText">Wybierz</span>
                       <select value={buyProductId} onChange={(e) => setBuyProductId(e.target.value)}>
                         {inventory.map((item) => (
                           <option key={item.product_id} value={item.product_id}>
-                            {item.name} — {(item.price / 100).toFixed(2)} zł (qty: {item.qty})
+                            {item.name} — {(item.price / 100).toFixed(2)} zł
                           </option>
                         ))}
                       </select>
@@ -421,10 +418,8 @@ export default function MachinePage() {
           {user?.role === 'admin' && (
             <form className="inventoryItem addCard" onSubmit={handleAddItem}>
               <div className="itemTitle">Dodaj produkt</div>
-              <div className="itemMeta">Wybierz produkt i ilość</div>
-              {availableProducts.length === 0 ? (
-                <div className="mutedNote">Wszystkie produkty są już w tym automacie.</div>
-              ) : (
+              {availableProducts.length > 0 && <div className="itemMeta">Wybierz produkt i ilość</div>}
+              {availableProducts.length === 0 ? null : (
                 <div className="adminControls">
                   <select
                     value={selectedProductId}

@@ -5,6 +5,8 @@ import './PurchaseHistoryPage.css'
 export default function PurchaseHistoryPage() {
   const { user } = useAuth()
   const [orders, setOrders] = useState([])
+  const [products, setProducts] = useState([])
+  const [machines, setMachines] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -12,20 +14,30 @@ export default function PurchaseHistoryPage() {
       setLoading(false)
       return
     }
-    fetch('/orders/my', { credentials: 'include' })
-      .then((res) => res.json().catch(() => []))
-      .then((data) => setOrders(Array.isArray(data) ? data : []))
+    Promise.all([
+      fetch('/orders/my', { credentials: 'include' }).then((res) => res.json().catch(() => [])),
+      fetch('/products', { credentials: 'include' }).then((res) => res.json().catch(() => [])),
+      fetch('/machines', { credentials: 'include' }).then((res) => res.json().catch(() => [])),
+    ])
+      .then(([ordersData, productsData, machinesData]) => {
+        setOrders(Array.isArray(ordersData) ? ordersData : [])
+        setProducts(Array.isArray(productsData) ? productsData : [])
+        setMachines(Array.isArray(machinesData) ? machinesData : [])
+      })
       .finally(() => setLoading(false))
   }, [user])
 
-  if (!user) {
-    return (
-      <div className="historyPage">
-        <h1>Historia zakupów</h1>
-        <p>Zaloguj się, żeby zobaczyć swoje zakupy.</p>
-      </div>
-    )
+  const productName = (id) => {
+    const p = products.find((x) => x.id === id)
+    return p ? p.name : `ID: ${id}`
   }
+
+  const machineLabel = (id) => {
+    const m = machines.find((x) => x.id === id)
+    return m ? `${m.city} — ${m.location}` : `ID: ${id}`
+  }
+
+  if (!user) return null
 
   if (loading) {
     return (
@@ -52,11 +64,10 @@ export default function PurchaseHistoryPage() {
             <li key={o.id} className="historyCard">
               <div className="historyTop">
                 <span>Zamówienie #{o.id}</span>
-                <span>{o.status}</span>
               </div>
               <div className="historyMeta">
-                <div>Produkt ID: {o.product_id}</div>
-                <div>Automat ID: {o.machine_id}</div>
+                <div>Produkt: {productName(o.product_id)}</div>
+                <div>Automat: {machineLabel(o.machine_id)}</div>
                 <div>Cena: {typeof o.price === 'number' ? (o.price / 100).toFixed(2) : o.price} zł</div>
                 <div>Płatność: {o.payment_method}</div>
                 <div>Data: {o.created_at}</div>
