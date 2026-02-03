@@ -1,0 +1,55 @@
+.issuesPage {
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.issuesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.issueCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+  display: grid;
+  gap: 6px;
+}
+
+.issueTitle {
+  font-weight: 700;
+}
+
+.issueMeta,
+.issueText {
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.issueTime {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.issueBtn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.issueBtn {
+  width: 120px;
+}
+
+.issueBtn.danger {
+  border-color: #ef4444;
+  background: #fecdd3;
+  color: #991b1b;
+}

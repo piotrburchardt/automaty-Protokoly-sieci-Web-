@@ -44,11 +44,11 @@ def list_products(query: Optional[str] = None):
     with connect() as db:
         if query:
             rows = db.execute(
-                "SELECT * FROM products WHERE name LIKE ? ORDER BY id",
+                "SELECT * FROM products WHERE is_archived = 0 AND name LIKE ? ORDER BY id",
                 (f"%{query}%",),
             ).fetchall()
         else:
-            rows = db.execute("SELECT * FROM products ORDER BY id").fetchall()
+            rows = db.execute("SELECT * FROM products WHERE is_archived = 0 ORDER BY id").fetchall()
         return [dict(row) for row in rows]
 
 
@@ -83,5 +83,5 @@ def delete_product(product_id: int, request: Request):
     if not is_admin(request):
         return Response(status_code=401)
     with connect() as db:
-        db.execute("DELETE FROM products WHERE id = ?", (product_id,))
+        db.execute("UPDATE products SET is_archived = 1 WHERE id = ?", (product_id,))
     return Response(status_code=204)

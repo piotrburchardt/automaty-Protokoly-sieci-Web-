@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
+import './PurchaseHistoryPage.css'
 
 export default function PurchaseHistoryPage() {
   const { user } = useAuth()
@@ -19,7 +20,7 @@ export default function PurchaseHistoryPage() {
 
   if (!user) {
     return (
-      <div style={{ padding: '24px' }}>
+      <div className="historyPage">
         <h1>Historia zakupów</h1>
         <p>Zaloguj się, żeby zobaczyć swoje zakupy.</p>
       </div>
@@ -28,7 +29,7 @@ export default function PurchaseHistoryPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: '24px' }}>
+      <div className="historyPage">
         <h1>Historia zakupów</h1>
         <p>Ładowanie...</p>
       </div>
@@ -36,32 +37,24 @@ export default function PurchaseHistoryPage() {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div className="historyPage">
       <h1>Historia zakupów</h1>
       {user.role === 'admin' && (
-        <div style={{ margin: '8px 0 16px', fontWeight: 700 }}>
+        <div className="historySummary">
           Razem: {(orders.reduce((sum, o) => sum + (o.price || 0), 0) / 100).toFixed(2)} PLN
         </div>
       )}
       {orders.length === 0 ? (
         <p>Nie masz jeszcze zakupów.</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '12px' }}>
+        <ul className="historyList">
           {orders.map((o) => (
-            <li
-              key={o.id}
-              style={{
-                border: '1px solid #e5e7eb',
-                borderRadius: '10px',
-                padding: '12px',
-                background: '#ffffff',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
+            <li key={o.id} className="historyCard">
+              <div className="historyTop">
                 <span>Zamówienie #{o.id}</span>
                 <span>{o.status}</span>
               </div>
-              <div style={{ fontSize: '14px', marginTop: '6px', color: '#4b5563', display: 'grid', gap: '4px' }}>
+              <div className="historyMeta">
                 <div>Produkt ID: {o.product_id}</div>
                 <div>Automat ID: {o.machine_id}</div>
                 <div>Cena: {typeof o.price === 'number' ? (o.price / 100).toFixed(2) : o.price} zł</div>

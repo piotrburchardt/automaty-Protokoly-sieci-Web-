@@ -1,0 +1,41 @@
+.historyPage {
+  padding: 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.historySummary {
+  margin: 8px 0 10px;
+  font-weight: 700;
+}
+
+.historyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.historyCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  background: #ffffff;
+  display: grid;
+  gap: 8px;
+}
+
+.historyTop {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.historyMeta {
+  font-size: 14px;
+  margin-top: 2px;
+  color: #4b5563;
+  display: grid;
+  gap: 4px;
+}

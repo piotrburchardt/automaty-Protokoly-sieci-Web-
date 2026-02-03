@@ -1,0 +1,65 @@
+.productsPage {
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.productsAddForm {
+  display: grid;
+  gap: 8px;
+  max-width: 360px;
+}
+
+.productsAddForm input {
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font: inherit;
+}
+
+.productsBtn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.productsBtn.danger {
+  border-color: #ef4444;
+  background: #fecdd3;
+  color: #991b1b;
+}
+
+.productsCardList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.productsCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+  display: grid;
+  gap: 8px;
+}
+
+.productsCardTitle {
+  font-weight: 700;
+}
+
+.productsField {
+  display: grid;
+  gap: 4px;
+}
+
+.productsField input {
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font: inherit;
+}

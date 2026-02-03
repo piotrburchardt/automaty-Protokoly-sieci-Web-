@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
+import './IssuesPage.css'
 
 export default function IssuesPage() {
   const { user } = useAuth()
@@ -28,7 +29,7 @@ export default function IssuesPage() {
 
   if (!user) {
     return (
-      <div style={{ padding: '24px' }}>
+      <div className="issuesPage">
         <h1>Lista usterek</h1>
         <p>Zaloguj się jako admin.</p>
       </div>
@@ -37,7 +38,7 @@ export default function IssuesPage() {
 
   if (user.role !== 'admin') {
     return (
-      <div style={{ padding: '24px' }}>
+      <div className="issuesPage">
         <h1>Lista usterek</h1>
         <p>Usterki wysyłają użytkownicy, a tutaj podgląd i usuwanie ma tylko admin.</p>
       </div>
@@ -46,7 +47,7 @@ export default function IssuesPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: '24px' }}>
+      <div className="issuesPage">
         <h1>Lista usterek</h1>
         <p>Ładowanie...</p>
       </div>
@@ -54,47 +55,29 @@ export default function IssuesPage() {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div className="issuesPage">
       <h1>Lista usterek</h1>
       {issues.length === 0 ? (
         <p>Brak zgłoszeń.</p>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '12px' }}>
+        <ul className="issuesList">
           {issues.map((i) => (
-            <li
-              key={i.id}
-              style={{
-                border: '1px solid #e5e7eb',
-                borderRadius: '10px',
-                padding: '12px',
-                background: '#fff',
-                display: 'grid',
-                gap: '6px',
-              }}
-            >
-              <div style={{ fontWeight: 700 }}>
+            <li key={i.id} className="issueCard">
+              <div className="issueTitle">
                 #{i.id} - {i.title}
               </div>
-              <div style={{ fontSize: '14px', color: '#4b5563' }}>
+              <div className="issueMeta">
                 Automat: {i.machine_id} | Status: {i.status}
               </div>
-              <div style={{ fontSize: '14px', color: '#4b5563' }}>{i.description}</div>
-              <div style={{ fontSize: '12px', color: '#6b7280' }}>
+              <div className="issueText">{i.description}</div>
+              <div className="issueTime">
                 Utworzono: {i.created_at} {i.closed_at ? `| Zamknięto: ${i.closed_at}` : ''}
               </div>
               <button
                 type="button"
                 onClick={() => removeIssue(i.id)}
                 disabled={removingId === i.id}
-                style={{
-                  padding: '8px 10px',
-                  borderRadius: '8px',
-                  border: '1px solid #ef4444',
-                  background: removingId === i.id ? '#fee2e2' : '#fecdd3',
-                  color: '#991b1b',
-                  cursor: 'pointer',
-                  width: '120px',
-                }}
+                className="issueBtn danger"
               >
                 {removingId === i.id ? 'Usuwanie...' : 'Usuń'}
               </button>
