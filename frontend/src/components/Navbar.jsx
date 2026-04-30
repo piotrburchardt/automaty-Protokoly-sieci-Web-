@@ -16,7 +16,7 @@ export default function Navbar({ search, onSearchChange }) {
     <div className="navbar">
       <div className="navbarTitle">
         <button type="button" className="homeButton" onClick={() => navigate('/HomePage')}>
-          Symulator automawów
+          Symulator automatów
         </button>
         {user && user.role !== 'admin' && (
           <div className="navbarAdminLinks">
@@ -71,16 +71,16 @@ export default function Navbar({ search, onSearchChange }) {
             <>
               {user.role === 'admin' && <span className="navbarAdmin">Zalogowano jako admin</span>}
               <button type="button" className="navbarButton" onClick={handleLogout}>
-                Wyloguj sie
+                Wyloguj się
               </button>
             </>
           ) : (
             <>
               <button type="button" className="navbarButton" onClick={() => navigate('/signin')}>
-                Zaloguj sie
+                Zaloguj się
               </button>
               <button type="button" className="navbarButtonPrimary" onClick={() => navigate('/signup')}>
-                Zarejestruj sie
+                Zarejestruj się
               </button>
             </>
           )}

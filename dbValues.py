@@ -7,7 +7,7 @@ def seed_db():
         # USERS
         users = [
             ("admin", "admin", "admin"),
-            ("user1", "123", "user"),
+            ("user", "user", "user"),
             ("user2", "123", "user")
         ]
         
