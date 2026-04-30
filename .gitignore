@@ -2,5 +2,8 @@ notatki/
 __pycache__/
 *.pyc
 .venv/
-app.db
+*.db
 .env
+node_modules/
+dist/
+.DS_Store
